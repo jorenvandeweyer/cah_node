@@ -119,6 +119,7 @@ class CAH {
     }
 
     nextRound(){
+        console.log("nextRound");
         if(this.currentRound++ >= this.rounds){
             return {
                 status: "finished",
@@ -131,6 +132,12 @@ class CAH {
         while(blackCards.length < this.cards){
             blackCards.push(cards.blackCards[this.blackCard]);
 
+        }
+        for(let player in this.players){
+            console.log(player + ": " + this.players[player].Cards.length + "/" + this.cards);
+            while(this.players[player].Cards.length < this.cards){
+                this.players[player].addCard(cards.whiteCards[this.whiteCard]);
+            }
         }
 
         this.round = new Round(blackPlayer, blackCards, this.players);
@@ -165,7 +172,6 @@ class CAH {
             }];
         }
     }
-
 
 }
 

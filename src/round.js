@@ -28,7 +28,7 @@ module.exports = class Round{
                             id_private.push(key);
 
                             let white_cards = this.players[key].Cards;
-                            let text = "Pick a card";
+                            let text = "**Pick a card:**";
 
                             for(let i = 0; i < white_cards.length; i++){
                                 text += "\n" + i + ": " + white_cards[i];
@@ -82,10 +82,21 @@ module.exports = class Round{
                             this.cards_keys.push(key);
                         }
 
-                        let description_private = "Choose the winning card";
+                        let description_private = "**Choose the winning card:**";
 
                         for (let i = 0; i<this.cards.length; i++){
-                            description_private += "\n" + i + ": " + this.cards[i];
+                            let qa = this.blackCard;
+
+                            let cards = this.cards[i].slice(0);
+
+                            if(qa.includes("\_")){
+                                while(qa.includes("\_")){
+                                    qa = qa.replace("\_", "**" + cards.shift() + "**");
+                                }
+                            } else {
+                                qa = qa + " **" + cards.shift() + "**";
+                            }
+                            description_private += "\n" + i + ": " + qa;
                         }
 
                         return [
@@ -123,7 +134,7 @@ module.exports = class Round{
                         var description = "%player won the round! **( " + this.players[won].points + " Points)** %won\n";
 
                         for(key in this.choices){
-                            var qa = this.blackCard;
+                            let qa = this.blackCard;
 
                             if(qa.includes("\_")){
                                 while(qa.includes("\_")){
@@ -142,7 +153,7 @@ module.exports = class Round{
 
                         return [{
                             status: "roundWon",
-                            id: id,
+                            id: won,
                             blackCard: this.blackCard,
                             whiteCards: this.choices,
                             description: description,
