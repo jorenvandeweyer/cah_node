@@ -1,5 +1,5 @@
 {
-  "name": "cah_node",
+  "name": "cah_game",
   "version": "1.0.0",
   "description": "Cards Against Humanity node package",
   "main": "cah.js",
@@ -7,5 +7,21 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Joren Vandeweyer",
-  "license": "ISC"
+  "license": "ISC",
+  "directories": {
+    "example": "examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jorenvandeweyer/cah_node.git"
+  },
+  "keywords": [
+    "Cards",
+    "Against",
+    "Humanity"
+  ],
+  "bugs": {
+    "url": "https://github.com/jorenvandeweyer/cah_node/issues"
+  },
+  "homepage": "https://github.com/jorenvandeweyer/cah_node#readme"
 }
