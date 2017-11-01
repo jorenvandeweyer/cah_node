@@ -89,12 +89,12 @@ class CAH {
 
     leave(id){
         let player = this.players[id];
-        if(player == undefined) return {status: "error", description: "%player is not in the game"};
+        if(player == undefined) return [{status: "error", id:id, description: "%player is not in the game"}];
 
         delete this.players[id];
-        if(Object.keys(this.player).length < 3){
+        if(Object.keys(this.players).length < 3){
             return [{
-                status: "left",
+                status: "finished",
                 id: id,
                 description: "%player left the game, not enough players left, games has ended"
             }];
@@ -119,7 +119,6 @@ class CAH {
     }
 
     nextRound(){
-        console.log("nextRound");
         if(this.currentRound++ >= this.rounds){
             return {
                 status: "finished",
@@ -199,4 +198,5 @@ module.exports = class CAHGame{
     addPacks(pack){
         return this.cah.addPacks(packs);
     }
+
 }
