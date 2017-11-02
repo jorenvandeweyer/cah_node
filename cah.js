@@ -2,8 +2,6 @@ const cards = require("./content/cards");
 const Player = require("./src/player");
 const Round = require("./src/round");
 
-var game;
-
 class CAH {
     constructor(owner, cards=5, rounds=5, packs=["Base"]){
         if(cards < 3){

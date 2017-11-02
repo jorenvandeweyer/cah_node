@@ -131,7 +131,7 @@ module.exports = class Round{
                         this.players[won].won();
                         this.status = "ready";
 
-                        var description = "%player won the round! **( " + this.players[won].points + " Points)** %won\n";
+                        let description = "%player won the round! **( " + this.players[won].points + " Points)** %won\n";
 
                         for(key in this.choices){
                             let qa = this.blackCard;
