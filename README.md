@@ -1,7 +1,7 @@
 ## Cards Against Humanity Game Node Package ##
 
 ## Example script for implementation in a discord bot build on Discord.js##
-
+The script can be found insides `examples/`
 ```javascript
 
 var cah = require("./examples/cahgamehandler");
@@ -23,11 +23,6 @@ function cahChooseCommand(msg){
 }
 
 function cahResetCommand(msg){
-	if(!serverManager.isAdmin(msg)){
-		message = createEmbed("purple", "You can't reset the game");
-		send(msg, message);
-		return;
-	}
 	cah.reset(msg);
 }
 ```
