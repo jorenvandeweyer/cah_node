@@ -158,6 +158,10 @@ module.exports = class Round{
                             whiteCards: this.choices,
                             description: description,
                             cards: this.choices
+                        }, {
+                            status: "data",
+                            subj: "point",
+                            winner: won
                         }];
                     } else {
                         return [{
