@@ -60,18 +60,19 @@ module.exports = class Round{
                         }];
                     }
                     if(card.length < this.pick){
-                        return {
+                        return [{
                             status: "error",
                             id: id,
                             description: "You need to choose atleast " + this.pick + " cards!"
-                        }
+                        }];
                     }
 
-                    this.choices[id] = [];
-                    for(let i = 0; i < card.length; i++){
-                        if(i == this.pick) break;
-                        this.choices[id].push(this.players[id].playCard(card[i]));
-                    }
+                    // this.choices[id] = [];
+                    this.choices[id] = this.players[id].playCard(this.pick, card)
+                    // for(let i = 0; i < card.length; i++){
+                    //     if(i == this.pick) break;
+                    //     this.choices[id].push(this.players[id].playCard(card[i]));
+                    // }
 
                     if(Object.keys(this.choices).length == Object.keys(this.players).length - 1){
                         this.status = "choose";
