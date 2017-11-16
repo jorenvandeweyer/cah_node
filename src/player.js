@@ -1,14 +1,7 @@
 module.exports = class Player{
-    constructor(id, stats=false){
+    constructor(id){
         this.id = id;
         this.cards = [];
-        if(stats){
-            this.stats = stats;
-        } else {
-            this.stats = {
-                points: 0
-            }
-        }
     }
 
     get Cards(){
@@ -34,10 +27,6 @@ module.exports = class Player{
             this.cards.splice(index, 1);
         }
         return array;
-    }
-
-    won(){
-        this.stats.points++;
     }
 
 }
