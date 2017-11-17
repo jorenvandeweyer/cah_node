@@ -3,7 +3,7 @@ const Player = require("./src/player");
 const Round = require("./src/round");
 
 class CAH {
-    constructor(owner, stats, cards=5, rounds=5, packs=["Base"]){
+    constructor(owner, cards=5, rounds=5, packs=["Base"]){
         if(cards < 3){
             cards = 3;
         }
@@ -12,7 +12,6 @@ class CAH {
         }
 
         this.owner = owner;
-        this.stats = stats;
         this.packs = packs;
         this.cards = cards;
         this.rounds = rounds;
@@ -67,7 +66,7 @@ class CAH {
     }
 
     join(id){
-        let player = new Player(id, this.stats[id]);
+        let player = new Player(id);
 
         while(player.Cards.length < this.cards){
             player.addCard(cards.whiteCards[this.whiteCard]);
@@ -174,10 +173,10 @@ class CAH {
 }
 
 module.exports = class CAHGame{
-    constructor(id, stats, cards=5, rounds=5, packs=["Base"]){
+    constructor(id, cards=5, rounds=5, packs=["Base"]){
         this.owner = id;
         this.started = false;
-        this.cah = new CAH(id, stats, cards=cards, rounds=rounds, packs=packs);
+        this.cah = new CAH(id, cards=cards, rounds=rounds, packs=packs);
     }
 
     join(id){
