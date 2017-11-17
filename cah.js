@@ -10,6 +10,9 @@ class CAH {
         if(rounds < 1){
             rounds = 1;
         }
+        if(packs[0] == "all"){
+            this.packs = cards.order;
+        }
 
         this.owner = owner;
         this.packs = packs;
