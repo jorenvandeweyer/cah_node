@@ -1,5 +1,6 @@
 const CAH = require("cah_game");
 const fs = require("fs");
+const db = require("../src/database");
 
 function createEmbed(colorName, info, title, fields, footer){
 	switch(colorName){
@@ -62,18 +63,29 @@ function send(msg, message, _callback){
 function broadcastCahMessages(msg, array){
 	for (let i = 0; i < array.length; i++){
 		let data = array[i];
-
-		let message;
 		if(data.description){
-			message = data.description;
-		}
+			let message = data.description.replace(/_/g, "\\_");
 
-		if(data.id != undefined && message.includes("%player")){
-			message = message.replace("%player", "<@" + data.id + ">");
-		}
+			if(data.id != undefined && message.includes("%player")){
+				message = message.replace("%player", "<@" + data.id + ">");
+			}
 
-		message = createEmbed("purple", message.replace(/_/g, "\\_"));
-		send(msg, message);
+			if(data.id != undefined && message.includes("%points")){
+				db.getStats_cah(msg.guild.id, data.id, (row) => {
+					let points = 1;
+					if(row){
+						points+= row.points;
+					}
+					message = message.replace("%points", points);
+					message = createEmbed("purple", message);
+					send(msg, message);
+				});
+			} else {
+				message = createEmbed("purple", message);
+				send(msg, message);
+			}
+
+		}
 
 		if(data.private != undefined){
 			for(let j = 0; j < data.id_private.length; j++){
@@ -126,21 +138,6 @@ function broadcastCahMessages(msg, array){
 class gameHandler{
     constructor(){
         this.holder = {};
-        this.getStats();
-    }
-
-    getStats(){
-        try {
-            this.stats = JSON.parse(fs.readFileSync('./data/cahstats.json', 'utf8'));
-        } catch(e) {
-            this.stats = {};
-        }
-    }
-
-    saveStats(_callback){
-        fs.writeFile(__dirname + "/../data/cahstats.json", JSON.stringify(this.stats), "utf8", function(err){
-            (typeof _callback === 'function') ? _callback(err) : null;
-        });
     }
 
     start(msg){
@@ -164,13 +161,17 @@ class gameHandler{
             } else {
                 rounds = 5;
             }
-
-			let guildid = msg.guild.id;
-			if(this.stats[guildid] == undefined){
-				this.stats[guildid] = {};
+			let packs;
+			if(args.includes("-packs")){
+				let index = args.indexOf("-packs");
+				packs = args[index+1].split(",");
+			} else {
+				packs = ["Base"];
 			}
 
-            this.holder[id] = new CAH(msg.author.id, this.stats[msg.guild.id], cards, rounds);
+			let guildid = msg.guild.id;
+
+            this.holder[id] = new CAH(msg.author.id, cards, rounds, packs);
 
             let message = createEmbed("purple", "CAH Game started, type !cjoin to join!");
             send(msg, message);
@@ -228,32 +229,24 @@ class gameHandler{
                 if(data[i].status == "finished") delete this.holder[id];
             }
 
-            broadcastCahMessages(msg, data);
 
 			for(let i = 0; i < data.length; i++){
-				let message = data[i];
 
-				if(data.status == "data"){
-					switch (data.subj) {
+				if(data[i].status == "data"){
+					switch (data[i].subj) {
 						case "point":
-							let points = data.data;
 							let guildid = msg.guild.id;
-							//delete?
-							if(this.stats[guildid] == undefined){
-								this.stats[guildid] = {};
-							}
-							if(this.stats[guildid][data.winner] == undefined){
-								this.stats[guildid][data.winner] = {points: 0};
-							}
-							this.stats[guildid][data.winner].points++;
-
-							this.saveStats();
+							let playerid = data[i].winner[0];
+							db.setStats_cah(guildid, playerid, 1);
 							break;
 						default:
 
 					}
 				}
 			}
+
+			broadcastCahMessages(msg, data);
+
         }
     }
 
@@ -264,6 +257,33 @@ class gameHandler{
             description: "CAH was resetted for this channel, type !cstart to start a new game!"
         }])
     }
+
+	scoreboard(msg){
+		let guildid = msg.guild.id;
+
+		if(msg.params.length >= 1){
+			db.getStats_cah(guildid, msg.mentions.users.first().id, (row) => {
+				let message;
+				if(row){
+					message = createEmbed("purple", "<@" + row.id + "> has " + row.points + " points!");
+				} else {
+					message = createEmbed("purple", "<@" + msg.mentions.users.first().id + "> didn't won any rounds yet");
+				}
+				send(msg, message);
+			});
+		} else {
+			db.getStats_cah(guildid, "top25", (rows) => {
+				if(rows){
+					let message = "Top 25:\n";
+					for(let i = 0; i < rows.length; i++){
+						message += "\n" + (1+i) + " - <@" + rows[i].id + ">: " + rows[i].points + " points";
+					}
+					message = createEmbed("purple", message, "Scoreboard:");
+					send(msg, message);
+				}
+			});
+		}
+	}
 }
 
 exports.start = function(msg){
@@ -284,6 +304,10 @@ exports.choose = function(msg){
 
 exports.reset = function(msg){
     game.reset(msg);
+}
+
+exports.scoreboard = function(msg){
+	game.scoreboard(msg);
 }
 
 const game = new gameHandler();
