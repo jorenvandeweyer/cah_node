@@ -3,20 +3,20 @@ const Player = require("./src/player");
 const Round = require("./src/round");
 
 class CAH {
-    constructor(owner, cards=5, rounds=5, packs=["Base"]){
-        if(cards < 3){
-            cards = 3;
+    constructor(owner, cards_=5, rounds=5, packs=["Base"]){
+        if(cards_ < 3){
+            cards_ = 3;
         }
         if(rounds < 1){
             rounds = 1;
         }
         if(packs[0] == "all"){
-            this.packs = cards.order;
+            packs = cards.order;
         }
 
         this.owner = owner;
         this.packs = packs;
-        this.cards = cards;
+        this.cards = cards_;
         this.rounds = rounds;
 
         this.round;
@@ -53,7 +53,6 @@ class CAH {
         for (let i = 0; i<this.packs.length; i++){
             if(cards.order.includes(this.packs[i])){
                 let pack = cards[this.packs[i]];
-                //console.log(pack);
                 if(white){
                     this.whiteCards = this.whiteCards.concat(pack.white);
                 }
