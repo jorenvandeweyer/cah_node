@@ -191,6 +191,66 @@ module.exports = class Round{
         this.players[player.id] = player;
     }
 
+    skip(){
+        switch (this.status) {
+            case "black":
+                return [{
+                    status: "nextRound",
+                    description: "Choosing someone else to pick a black card"
+                }];
+                break;
+            case "white":
+                this.status = "choose";
+                let choices = Object.keys(this.choices);
+                while(choices.length > 0){
+                    let key = choices.splice(Math.floor(Math.random()*choices.length), 1);
+                    this.cards.push(this.choices[key]);
+                    this.cards_keys.push(key);
+                }
+
+                let description_private = "**Choose the winning card:**";
+
+                for (let i = 0; i<this.cards.length; i++){
+                    let qa = this.blackCard;
+
+                    let cards = this.cards[i].slice(0);
+
+                    if(qa.includes("\_")){
+                        while(qa.includes("\_")){
+                            qa = qa.replace("\_", "**" + cards.shift() + "**");
+                        }
+                    } else {
+                        qa = qa + " **" + cards.shift() + "**";
+                    }
+                    description_private += "\n" + i + ": " + qa;
+                }
+
+                return [{
+                    status: "allchosen",
+                    id: this.blackPlayer,
+                    cards: this.cards,
+                    private: true,
+                    id_private: [this.blackPlayer],
+                    description_private: [description_private],
+                    description: "All players have picked an answer. %player must choose their favourite answer."
+                }];
+                break;
+            case "choose":
+                this.status = "ready";
+                return [{
+                    status: "nextRound",
+                    description: "Skipped this round. No winners this round :|"
+                }];
+                break;
+            default:
+                return [{
+                    status: "done",
+                    description: "You fucked up your code rewrite it :)"
+                }];
+
+        }
+    }
+
     get hasToChoose(){
         return [];
     }

@@ -172,6 +172,41 @@ class CAH {
         }
     }
 
+    skip(){
+        if(this.round){
+            let round = this.round.skip();
+            if(round[0].status == "nextRound"){
+                return round.concat(this.nextRound());
+            } else {
+                return round;
+            }
+        } else {
+            return [{
+                status: "error",
+                description: "there is no round going on."
+            }];
+        }
+    }
+
+    kick(id){
+        let player = this.players[id];
+        if(player == undefined) return [{status: "error", id:id, description: "%player is not in the game"}];
+
+        delete this.players[id];
+        if(Object.keys(this.players).length < 3){
+            return [{
+                status: "finished",
+                id: id,
+                description: "%player has been kicked from the game, not enough players left, games has ended"
+            }];
+        } else {
+            return [{
+                status: "left",
+                id: id,
+                description: "%player has been kicked from the game"
+            }];
+        }
+    }
 }
 
 module.exports = class CAHGame{
@@ -200,6 +235,14 @@ module.exports = class CAHGame{
 
     addPacks(pack){
         return this.cah.addPacks(packs);
+    }
+
+    skip(){
+        return this.cah.skip();
+    }
+
+    kick(id){
+        return this.cah.kick(id);
     }
 
 }

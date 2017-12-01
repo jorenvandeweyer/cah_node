@@ -1,6 +1,6 @@
 {
   "name": "cah_game",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Cards Against Humanity node package",
   "main": "cah.js",
   "scripts": {
