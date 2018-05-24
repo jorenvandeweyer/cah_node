@@ -23,7 +23,7 @@ module.exports = class Round{
                         let id_private = [];
                         let description_private = [];
 
-                        for(key in this.players){
+                        for(let key in this.players){
                             if(key == this.blackPlayer) continue;
                             id_private.push(key);
 
@@ -133,7 +133,7 @@ module.exports = class Round{
 
                         let description = "%player won the round! **( %points Points)** %won\n";
 
-                        for(key in this.choices){
+                        for(let key in this.choices){
                             let qa = this.blackCard;
 
                             if(qa.includes("\_")){
